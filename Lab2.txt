@@ -1,8 +1,8 @@
 BDA
 
-ssh root@25.89.175.163
+ssh root@25.63.125.204
 gpsneroot
-ssh gpadmin@25.89.175.163
+ssh gpadmin@25.63.125.204
 dmkm1234
 
 psql
