@@ -1,0 +1,350 @@
+BDA
+
+ssh root@25.63.125.204
+gpsneroot
+ssh gpadmin@25.63.125.204
+dmkm1234
+
+psql
+\c training1
+SET search_path TO ddemo, public;
+\dt 
+
+######################## LAB 01 ##############################
+template1=# \l
+                   List of databases
+    Name     |  Owner  | Encoding |  Access privileges  
+-------------+---------+----------+---------------------
+ MADLIB      | gpadmin | UTF8     | 
+ gplab       | gpadmin | UTF8     | 
+ hmdalab     | gpadmin | UTF8     | 
+ module5indb | gpadmin | UTF8     | 
+ postgres    | gpadmin | UTF8     | 
+ template0   | gpadmin | UTF8     | =c/gpadmin          
+                                  : gpadmin=CTc/gpadmin
+ template1   | gpadmin | UTF8     | =c/gpadmin          
+                                  : gpadmin=CTc/gpadmin
+ training1   | gpadmin | UTF8     | =Tc/gpadmin         
+                                  : gpadmin=CTc/gpadmin
+ training2   | gpadmin | UTF8     | =Tc/gpadmin         
+                                  : gpadmin=CTc/gpadmin
+(9 rows)
+
+
+training1=# \dn
+       List of schemas
+        Name        |  Owner  
+--------------------+---------
+ ddemo              | gpadmin
+ gp_toolkit         | gpadmin
+ information_schema | gpadmin
+ madlib             | gpadmin
+ myschema           | gpadmin
+ pg_aoseg           | gpadmin
+ pg_bitmapindex     | gpadmin
+ pg_catalog         | gpadmin
+ pg_toast           | gpadmin
+ public             | gpadmin
+(10 rows)
+
+SET
+training1=# \dt
+                         List of relations
+ Schema |           Name            | Type  |  Owner  |   Storage   
+--------+---------------------------+-------+---------+-------------
+ ddemo  | campaign_dim              | table | gpadmin | heap
+ ddemo  | campaign_dim_stage        | table | gpadmin | heap
+ ddemo  | categories_dim            | table | gpadmin | append only
+ ddemo  | city_state_zip            | table | gpadmin | append only
+ ddemo  | customer_addresses_dim    | table | gpadmin | append only
+ ddemo  | customer_demographics     | table | gpadmin | heap
+ ddemo  | customers_dim             | table | gpadmin | append only
+ ddemo  | date_dim                  | table | gpadmin | heap
+ ddemo  | day_weights               | table | gpadmin | heap
+ ddemo  | distribution              | table | gpadmin | heap
+ ddemo  | email_addresses_dim       | table | gpadmin | append only
+ ddemo  | female_first_names_xt_err | table | gpadmin | heap
+ ddemo  | kid_friendly_dvds         | table | gpadmin | append only
+ ddemo  | kid_friendly_dvds_xt_err  | table | gpadmin | heap
+ ddemo  | list_c                    | table | gpadmin | heap
+ ddemo  | male_first_names_xt_err   | table | gpadmin | heap
+ ddemo  | order_lineitems           | table | gpadmin | append only
+ ddemo  | order_lineitems_stage     | table | gpadmin | heap
+ ddemo  | orders                    | table | gpadmin | append only
+ ddemo  | payment_methods           | table | gpadmin | append only
+ ddemo  | products_dim              | table | gpadmin | append only
+ ddemo  | products_xt_err           | table | gpadmin | heap
+ ddemo  | raw_zip_city_state_xt_err | table | gpadmin | heap
+ ddemo  | state_sales_taxes_xt_err  | table | gpadmin | heap
+ ddemo  | streets                   | table | gpadmin | append only
+ ddemo  | streets_xt_err            | table | gpadmin | heap
+ ddemo  | surnames_xt_err           | table | gpadmin | heap
+ ddemo  | websites_xt_err           | table | gpadmin | heap
+ ddemo  | weekly_sales              | table | gpadmin | heap
+(29 rows)
+
+
+                                               Append-Only Table "ddemo.customers_dim"
+   Column    |          Type          |                              Modifiers                              | Storage  | Description 
+-------------+------------------------+---------------------------------------------------------------------+----------+-------------
+ customer_id | integer                | not null default nextval('customers_dim_customer_id_seq'::regclass) | plain    | 
+ first_name  | character varying(100) | not null                                                            | extended | 
+ last_name   | character varying(200) | not null                                                            | extended | 
+ gender      | character(1)           |                                                                     | extended | 
+Compression Type: quicklz
+Compression Level: 1
+Block Size: 32768
+Checksum: f
+Has OIDs: no
+Options: appendonly=true, compresstype=quicklz
+Distributed by: (customer_id)
+
+SELECT gender,count(*) FROM customers_dim GROUP BY gender;
+ gender | count  
+--------+--------
+ M      | 500959
+ F      | 499041
+(2 rows)
+
+training1=# select count(gender) from customers_dim;
+  count  
+---------
+ 1000000
+(1 row)
+
+
+SELECT
+c.gender, AVG(o.item_price) AS avg_price
+FROM
+ddemo.order_lineitems AS o
+JOIN
+ddemo.customers_dim AS c ON o.customer_id = c.customer_id GROUP BY c.gender;
+
+ gender |      avg_price      
+--------+---------------------
+ M      | 33.8456101189216746
+ F      | 33.7982853835904994
+(2 rows)
+
+[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step6.sql
+
+ gender |      avg_price      
+--------+---------------------
+ M      | 33.8456101189216746
+ F      | 33.7982853835904994
+(2 rows)
+
+
+FEMLAE
+[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
+     sum     |      product_category_name       
+-------------+----------------------------------
+ 27638821.85 | Kitchen
+ 27027249.97 | Home Improvement
+ 17284431.77 | DVD
+ 13628527.17 | Sports
+ 10841356.88 | Automotive Parts and Accessories
+(5 rows)
+
+MALE
+[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
+     sum     |      product_category_name       
+-------------+----------------------------------
+ 28004170.59 | Kitchen
+ 27160060.79 | Home Improvement
+ 17142686.13 | DVD
+ 13556837.62 | Sports
+ 10927544.41 | Automotive Parts and Accessories
+(5 rows)
+
+[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
+     sum     | product_category_name 
+-------------+-----------------------
+ 28004170.59 | Kitchen
+ 27638821.85 | Kitchen
+ 27160060.79 | Home Improvement
+ 27027249.97 | Home Improvement
+ 17284431.77 | DVD
+(5 rows)
+
+[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
+     sum     |      product_category_name       
+-------------+----------------------------------
+ 28004170.59 | Kitchen
+ 27638821.85 | Kitchen
+ 27160060.79 | Home Improvement
+ 27027249.97 | Home Improvement
+ 17284431.77 | DVD
+ 17142686.13 | DVD
+ 13628527.17 | Sports
+ 13556837.62 | Sports
+ 10927544.41 | Automotive Parts and Accessories
+ 10841356.88 | Automotive Parts and Accessories
+
+
+training2=# \dn
+       List of schemas
+        Name        |  Owner  
+--------------------+---------
+ gp_toolkit         | gpadmin
+ information_schema | gpadmin
+ madlib             | gpadmin
+ myschema           | gpadmin
+ pg_aoseg           | gpadmin
+ pg_bitmapindex     | gpadmin
+ pg_catalog         | gpadmin
+ pg_toast           | gpadmin
+ public             | gpadmin
+(9 rows)
+
+
+
+ training2=# \dt
+                  List of relations
+ Schema |      Name       | Type  |  Owner  | Storage 
+--------+-----------------+-------+---------+---------
+ public | bayes_test      | table | gpadmin | heap
+ public | fips            | table | gpadmin | heap
+ public | foo             | table | gpadmin | heap
+ public | housing         | table | gpadmin | heap
+ public | housing_nodupes | table | gpadmin | heap
+ public | income_state    | table | gpadmin | heap
+ public | logr_coef       | table | gpadmin | heap
+ public | nbtrain         | table | gpadmin | heap
+ public | persons         | table | gpadmin | heap
+ public | zeta            | table | gpadmin | heap
+ public | zeta1           | table | gpadmin | heap
+(11 rows)
+
+
+psql training2 -f lab1.sql
+
+select count(*) from bayes_test
+select count(*) from fips
+select count(*) from foo
+select count(*) from housing
+select count(*) from housing_nodupes
+select count(*) from income_state
+select count(*) from logr_coef
+select count(*) from nbtrain
+select count(*) from persons
+select count(*) from zeta
+select count(*) from zeta1
+
+count 
+-------
+    14
+(1 row)
+
+ count 
+-------
+    55
+(1 row)
+
+ count 
+-------
+    52
+(1 row)
+
+  count   
+----------
+ 12515394
+(1 row)
+
+  count  
+---------
+ 6257697
+(1 row)
+
+ count 
+-------
+    52
+(1 row)
+
+count 
+-------
+     1
+(1 row)
+
+ count 
+-------
+ 10010
+(1 row)
+
+  count   
+----------
+ 28542588
+(1 row)
+
+ count 
+-------
+ 64076
+(1 row)
+
+ count 
+-------
+ 64076
+(1 row)
+
+[gpadmin@localhost LAB01]$ psql training2 -f lab2.sql
+ total_records | total_dupes | total_uniques 
+---------------+-------------+---------------
+      12515394 |     6257697 |       6257697
+
+CREATE TABLE housing_nodupes AS
+
+SELECT DISTINCT ON
+ (serialno, state) * 
+FROM
+housing 
+DISTRIBUTED BY (serialno, state)
+;
+SELECTed
+6257697
+
+SELECT
+corr(hinc, rooms) 
+FROM
+housing_nodupes 
+WHERE
+state = 25
+;
+
+       corr        
+-------------------
+ 0.374485423827578
+(1 row)
+
+training2=# SELECT * FROM fips WHERE code = 25;
+ code | name 
+------+------
+   25 | MA
+(1 row)
+
+SELECT
+regr_r2(hinc, rooms) 
+FROM
+housing_nodupes 
+WHERE
+state = 25;
+
+      regr_r2      
+-------------------
+ 0.140239332659321
+(1 row)
+
+\a
+
+\o lab1_01.txt
+
+SELECT
+serialno
+,hinc
+,rooms 
+FROM
+housing_nodupes 
+WHERE
+hinc > 0 
+AND state = 25
+;
+

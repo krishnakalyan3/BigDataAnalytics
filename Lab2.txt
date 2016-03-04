@@ -1,350 +1,287 @@
-BDA
 
-ssh root@25.63.125.204
-gpsneroot
-ssh gpadmin@25.63.125.204
-dmkm1234
+Action Number 6
+===============
 
-psql
-\c training1
-SET search_path TO ddemo, public;
-\dt 
+LAB02
+10th value of lab1
+serialno   hinc 	rooms
+1403 	   30600     4
 
-######################## LAB 01 ##############################
-template1=# \l
-                   List of databases
-    Name     |  Owner  | Encoding |  Access privileges  
--------------+---------+----------+---------------------
- MADLIB      | gpadmin | UTF8     | 
- gplab       | gpadmin | UTF8     | 
- hmdalab     | gpadmin | UTF8     | 
- module5indb | gpadmin | UTF8     | 
- postgres    | gpadmin | UTF8     | 
- template0   | gpadmin | UTF8     | =c/gpadmin          
-                                  : gpadmin=CTc/gpadmin
- template1   | gpadmin | UTF8     | =c/gpadmin          
-                                  : gpadmin=CTc/gpadmin
- training1   | gpadmin | UTF8     | =Tc/gpadmin         
-                                  : gpadmin=CTc/gpadmin
- training2   | gpadmin | UTF8     | =Tc/gpadmin         
-                                  : gpadmin=CTc/gpadmin
-(9 rows)
+10th value of lab2
+education_level   white  black american_indian_alaska_native  asian  hawaii_pacific_islander others
+16  			  141336 8358  1726  						  17960  416                     2734
 
 
-training1=# \dn
-       List of schemas
-        Name        |  Owner  
---------------------+---------
- ddemo              | gpadmin
- gp_toolkit         | gpadmin
- information_schema | gpadmin
- madlib             | gpadmin
- myschema           | gpadmin
- pg_aoseg           | gpadmin
- pg_bitmapindex     | gpadmin
- pg_catalog         | gpadmin
- pg_toast           | gpadmin
- public             | gpadmin
-(10 rows)
+Action Number 8
+===============
 
-SET
-training1=# \dt
-                         List of relations
- Schema |           Name            | Type  |  Owner  |   Storage   
---------+---------------------------+-------+---------+-------------
- ddemo  | campaign_dim              | table | gpadmin | heap
- ddemo  | campaign_dim_stage        | table | gpadmin | heap
- ddemo  | categories_dim            | table | gpadmin | append only
- ddemo  | city_state_zip            | table | gpadmin | append only
- ddemo  | customer_addresses_dim    | table | gpadmin | append only
- ddemo  | customer_demographics     | table | gpadmin | heap
- ddemo  | customers_dim             | table | gpadmin | append only
- ddemo  | date_dim                  | table | gpadmin | heap
- ddemo  | day_weights               | table | gpadmin | heap
- ddemo  | distribution              | table | gpadmin | heap
- ddemo  | email_addresses_dim       | table | gpadmin | append only
- ddemo  | female_first_names_xt_err | table | gpadmin | heap
- ddemo  | kid_friendly_dvds         | table | gpadmin | append only
- ddemo  | kid_friendly_dvds_xt_err  | table | gpadmin | heap
- ddemo  | list_c                    | table | gpadmin | heap
- ddemo  | male_first_names_xt_err   | table | gpadmin | heap
- ddemo  | order_lineitems           | table | gpadmin | append only
- ddemo  | order_lineitems_stage     | table | gpadmin | heap
- ddemo  | orders                    | table | gpadmin | append only
- ddemo  | payment_methods           | table | gpadmin | append only
- ddemo  | products_dim              | table | gpadmin | append only
- ddemo  | products_xt_err           | table | gpadmin | heap
- ddemo  | raw_zip_city_state_xt_err | table | gpadmin | heap
- ddemo  | state_sales_taxes_xt_err  | table | gpadmin | heap
- ddemo  | streets                   | table | gpadmin | append only
- ddemo  | streets_xt_err            | table | gpadmin | heap
- ddemo  | surnames_xt_err           | table | gpadmin | heap
- ddemo  | websites_xt_err           | table | gpadmin | heap
- ddemo  | weekly_sales              | table | gpadmin | heap
-(29 rows)
+Compare	the	median	and	the	mean.
+If mean is less than the median:
+left skwed
+If mean is greater than the median:
+right skwed
+
+Does min and max quartiles make sense to you
+      hinc             rooms      
+ Min.   :      4   Min.   :1.000  
+ 1st Qu.:  26000   1st Qu.:4.000  
+ Median :  50300   Median :6.000  
+ Mean   :  67152   Mean   :5.627  
+ 3rd Qu.:  84200   3rd Qu.:7.000  
+ Max.   :1620560   Max.   :9.000 
+
+hinc min,max :: 4,1620560 (lot of variance, looks like an outlier)
+rooms min,max :: 1,9 
+Its not very clear in the lab documentation on the description of hinc
+
+How	do the values returned by the cor() function differ from the results obtained in lab?
+        hinc     rooms
+hinc  1.0000000 0.3820145
+rooms 0.3820145 1.0000000
+cor function gives the correlation value between two varibales.
+
+Action Number 10
+================
 
 
-                                               Append-Only Table "ddemo.customers_dim"
-   Column    |          Type          |                              Modifiers                              | Storage  | Description 
--------------+------------------------+---------------------------------------------------------------------+----------+-------------
- customer_id | integer                | not null default nextval('customers_dim_customer_id_seq'::regclass) | plain    | 
- first_name  | character varying(100) | not null                                                            | extended | 
- last_name   | character varying(200) | not null                                                            | extended | 
- gender      | character(1)           |                                                                     | extended | 
-Compression Type: quicklz
-Compression Level: 1
-Block Size: 32768
-Checksum: f
-Has OIDs: no
-Options: appendonly=true, compresstype=quicklz
-Distributed by: (customer_id)
+Question 2 : Experiment with r for the follwing types
+typeof(x)
+class(x)
+attributes(x)
+names(x)
+dim(x)
+> n <- 1  # scalar
+> s <- "Columbus, Ohio"   # string 
 
-SELECT gender,count(*) FROM customers_dim GROUP BY gender;
- gender | count  
---------+--------
- M      | 500959
- F      | 499041
-(2 rows)
+> levels <- c("Worst", "Bad", "Mediocre", "Good", "Awesome")
+> x  = levels
+> typeof(x)
+[1] "character"
+> class(x)
+[1] "character"
+> attributes(x)
+NULL
+> names(x)
+NULL
+> dim(x)
+NULL
 
-training1=# select count(gender) from customers_dim;
-  count  
----------
- 1000000
-(1 row)
+> ratings <- c("Worst", "Worst", "Bad", "Bad", "Good", "Bad", "Bad") 
+> x  = ratings
+> typeof(x)
+[1] "character"
+> class(x)
+[1] "character"
+> attributes(x)
+NULL
+> names(x)
+NULL
+> dim(x)
+NULL
 
+> critics <- c("Siskel", "Ebert", "Rowen", "Martin")
+> x  = critics
+> typeof(x)
+[1] "character"
+> class(x)
+[1] "character"
+> attributes(x)
+NULL
+> names(x)
+NULL
+> dim(x)
+NULL
 
-SELECT
-c.gender, AVG(o.item_price) AS avg_price
-FROM
-ddemo.order_lineitems AS o
-JOIN
-ddemo.customers_dim AS c ON o.customer_id = c.customer_id GROUP BY c.gender;
+> movies <- c("The Undefeated", "Snakes on a Plane", "Encino Man", "Casablanca")
+> x  = movies
+> typeof(x)
+[1] "character"
+> class(x)
+[1] "character"
+> attributes(x)
+NULL
+> names(x)
+NULL
+> dim(x)
+NULL
 
- gender |      avg_price      
---------+---------------------
- M      | 33.8456101189216746
- F      | 33.7982853835904994
-(2 rows)
+> attendance <- c(15, 350,175, 400)
+> x  = attendance
+> typeof(x)
+[1] "double"
+> class(x)
+[1] "numeric"
+> attributes(x)
+NULL
+> names(x)
+NULL
+> dim(x)
+NULL
 
-[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step6.sql
+> reviewers <- c("Siskel", "Siskel", "Ebert", "Ebert", "Rowan", "Martin", "Rowan")
+> x  = reviewers
+> typeof(x)
+[1] "character"
+> class(x)
+[1] "character"
+> attributes(x)
+NULL
+> names(x)
+NULL
+> dim(x)
+NULL
 
- gender |      avg_price      
---------+---------------------
- M      | 33.8456101189216746
- F      | 33.7982853835904994
-(2 rows)
+Question 3) Which	ones	work	on	which	kind	of	data	types?
+Answer: for vectors we can only find the typeOf() and class of the vecxtor
 
+Question 4) Type	these	values	into	the	RStudio	command	panel.
+Answer: given above
 
-FEMLAE
-[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
-     sum     |      product_category_name       
--------------+----------------------------------
- 27638821.85 | Kitchen
- 27027249.97 | Home Improvement
- 17284431.77 | DVD
- 13628527.17 | Sports
- 10841356.88 | Automotive Parts and Accessories
-(5 rows)
+Question 5) Typing	all	these	commands	for	each	variable	is	tedious.	Alternatively,	we	will write a	function tellme that	takes	a	variable	as	an	argument	and	performs typeof, class, names and str on	that	variable.
+Answer : 
 
-MALE
-[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
-     sum     |      product_category_name       
--------------+----------------------------------
- 28004170.59 | Kitchen
- 27160060.79 | Home Improvement
- 17142686.13 | DVD
- 13556837.62 | Sports
- 10927544.41 | Automotive Parts and Accessories
-(5 rows)
-
-[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
-     sum     | product_category_name 
--------------+-----------------------
- 28004170.59 | Kitchen
- 27638821.85 | Kitchen
- 27160060.79 | Home Improvement
- 27027249.97 | Home Improvement
- 17284431.77 | DVD
-(5 rows)
-
-[gpadmin@localhost LAB01]$ psql training1 -f lab1p1step7.sql
-     sum     |      product_category_name       
--------------+----------------------------------
- 28004170.59 | Kitchen
- 27638821.85 | Kitchen
- 27160060.79 | Home Improvement
- 27027249.97 | Home Improvement
- 17284431.77 | DVD
- 17142686.13 | DVD
- 13628527.17 | Sports
- 13556837.62 | Sports
- 10927544.41 | Automotive Parts and Accessories
- 10841356.88 | Automotive Parts and Accessories
-
-
-training2=# \dn
-       List of schemas
-        Name        |  Owner  
---------------------+---------
- gp_toolkit         | gpadmin
- information_schema | gpadmin
- madlib             | gpadmin
- myschema           | gpadmin
- pg_aoseg           | gpadmin
- pg_bitmapindex     | gpadmin
- pg_catalog         | gpadmin
- pg_toast           | gpadmin
- public             | gpadmin
-(9 rows)
+tellme <- function(x){
+  a1 =typeof(x)
+  a2 = class(x)
+  a3 = names(x)
+  a4 = str(x)
+  res = c(a1,a2,a3,a4)
+  return(res)
+}
 
 
 
- training2=# \dt
-                  List of relations
- Schema |      Name       | Type  |  Owner  | Storage 
---------+-----------------+-------+---------+---------
- public | bayes_test      | table | gpadmin | heap
- public | fips            | table | gpadmin | heap
- public | foo             | table | gpadmin | heap
- public | housing         | table | gpadmin | heap
- public | housing_nodupes | table | gpadmin | heap
- public | income_state    | table | gpadmin | heap
- public | logr_coef       | table | gpadmin | heap
- public | nbtrain         | table | gpadmin | heap
- public | persons         | table | gpadmin | heap
- public | zeta            | table | gpadmin | heap
- public | zeta1           | table | gpadmin | heap
-(11 rows)
+
+======================= LAB3
+
+> summary(ds$income)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+      4   26000   50300   67200   84200 1620000 
+> range(ds$income)
+[1]       4 1620560
+> sd(ds$income)
+[1] 68178
+> var(ds$income)
+[1] 4.65e+09
 
 
-psql training2 -f lab1.sql
+> summary(ds$rooms)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   1.00    4.00    6.00    5.63    7.00    9.00 
+> range(ds$rooms)
+[1] 1 9
+> sd(ds$rooms)
+[1] 1.99
 
-select count(*) from bayes_test
-select count(*) from fips
-select count(*) from foo
-select count(*) from housing
-select count(*) from housing_nodupes
-select count(*) from income_state
-select count(*) from logr_coef
-select count(*) from nbtrain
-select count(*) from persons
-select count(*) from zeta
-select count(*) from zeta1
+1.
+No it dosent as a min hose value cannot have max income
 
-count 
--------
-    14
-(1 row)
+2.
+> (m <- mean(ds$income, trim=0.10) )
+[1] 55347
+67200
 
- count 
--------
-    55
-(1 row)
+3.
+In comparison mean is lower if you remove top and bottom 10 percent 
 
- count 
--------
-    52
-(1 row)
+4.
+> quantile(ds$income, seq(from=0, to=1, length=11))
+    0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100% 
+ 10000  18200  27000  35630  45000  54600  66000  79500  98400 135000 910000 
 
-  count   
-----------
- 12515394
-(1 row)
+ The generic function quantile produces sample quantiles corresponding to the given probabilities. The smallest observation corresponds to a probability of 0 and the largest to a probability of 1.
 
-  count  
----------
- 6257697
-(1 row)
+ 5.
+ They vary as the the cummulative value of income is given for percentage in steps of 10 after removing the edges.
 
- count 
--------
-    52
-(1 row)
+ 6.
+ Yes they make more sence as we can see the distribution of income
 
-count 
--------
-     1
-(1 row)
+ 7.
+ dataframe ds as its outliers are removed
 
- count 
--------
- 10010
-(1 row)
+1.
+ head(ds)
+  income rooms   wealth
+1 105530     6  Wealthy
+2 141500     8  Wealthy
+3 161400     6  Wealthy
+4  72600     5 UpperMid
+5  61000     5 UpperMid
+6  92000     6  Wealthy
+> ?cut
 
-  count   
-----------
- 28542588
-(1 row)
+2.
+Dosent make sence as its plotiing only the fist 2 columns we need to transpose to make sence of it
 
- count 
--------
- 64076
-(1 row)
+ANOVA
+5.
+> summary(model)
 
- count 
--------
- 64076
-(1 row)
+Call:
+lm(formula = log10(purchase_amt) ~ as.factor(offers), data = offertest)
 
-[gpadmin@localhost LAB01]$ psql training2 -f lab2.sql
- total_records | total_dupes | total_uniques 
----------------+-------------+---------------
-      12515394 |     6257697 |       6257697
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.2426 -0.2867 -0.0314  0.3281  1.3010 
 
-CREATE TABLE housing_nodupes AS
+Coefficients:
+                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)               1.3401     0.0345   38.85  < 2e-16 ***
+as.factor(offers)offer1   0.4360     0.0481    9.07  < 2e-16 ***
+as.factor(offers)offer2   0.4162     0.0494    8.43  3.8e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-SELECT DISTINCT ON
- (serialno, state) * 
-FROM
-housing 
-DISTRIBUTED BY (serialno, state)
-;
-SELECTed
-6257697
+Residual standard error: 0.444 on 497 degrees of freedom
+Multiple R-squared: 0.171,	Adjusted R-squared: 0.167 
+F-statistic: 51.2 on 2 and 497 DF,  p-value: <2e-16 
 
-SELECT
-corr(hinc, rooms) 
-FROM
-housing_nodupes 
-WHERE
-state = 25
-;
+6.
+2.
+F score
+51.2 and p-value: <2e-16
 
-       corr        
--------------------
- 0.374485423827578
-(1 row)
+Yes since p valuse is less than 0%
 
-training2=# SELECT * FROM fips WHERE code = 25;
- code | name 
-------+------
-   25 | MA
-(1 row)
+3.
+2e-16
+3.8e-16
 
-SELECT
-regr_r2(hinc, rooms) 
-FROM
-housing_nodupes 
-WHERE
-state = 25;
+4. 
+Yes we can reject the Ho as the p values are significant
 
-      regr_r2      
--------------------
- 0.140239332659321
-(1 row)
 
-\a
+> TukeyHSD(aov(model))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
 
-\o lab1_01.txt
+Fit: aov(formula = model)
 
-SELECT
-serialno
-,hinc
-,rooms 
-FROM
-housing_nodupes 
-WHERE
-hinc > 0 
-AND state = 25
-;
+$`as.factor(offers)`
+                 diff    lwr    upr p adj
+offer1-noffer  0.4360  0.323 0.5490 0.000
+offer2-noffer  0.4162  0.300 0.5323 0.000
+offer2-offer1 -0.0198 -0.134 0.0947 0.913
+
+6.1
+No
+
+6.2
+offer2-offer1 has a an intercept that changes a lot
+
+6.3. Which style of graph do you find more helpful?
+Both are important as overlapping 
+
+> mx - my
+[1] -1.64
+> pooled.var(x,y)
+[1] 0.137
+
+> tstat = (mean(x) - mean(y))/sqrt(pooled.var(x,y))
+> tstat
+[1] -4.43
+
+
+
 
