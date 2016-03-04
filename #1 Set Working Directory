@@ -1,0 +1,91 @@
+#1 Set Working Directory
+#2 Generate Random Data
+
+> x <- runif(100, 0, 10)                  # 100 draws between 0 & 10
+> x
+  [1] 4.8975213 4.6027565 9.1212938 8.9224435 6.5886202 3.5533538 5.9527945 8.0585009
+  [9] 9.9737116 4.7290123 7.2014150 3.6176846 8.9792850 8.2101862 1.8078445 4.5024141
+
+Plot and Review 
+
+#3 Generate the OLS model
+
+> print(d)
+
+Call:
+lm(formula = y ~ x)
+
+Coefficients:
+(Intercept)            x  
+      4.853        6.014  
+
+Structure of the Model
+> str(d)
+List of 12
+ $ coefficients : Named num [1:2] 4.85 6.01
+  ..- attr(*, "names")= chr [1:2] "(Intercept)" "x"
+ $ residuals    : Named num [1:100] -1.6842 0.0541 -0.5781 0.9172 1.5555 ...
+  ..- attr(*, "names")= chr [1:100] "1" "2" "3" "4" ...
+ $ effects      : Named num [1:100] -376.345 159.211 -0.397 1.097 1.718 ...
+  ..- attr(*, "names")= chr [1:100] "(Intercept)" "x" "" "" ...
+ $ rank         : int 2
+
+#4 Print and Visualize the Results
+
+> print(d)
+
+Call:
+lm(formula = y ~ x)
+
+Coefficients:
+(Intercept)            x  
+      4.853        6.014  
+
+Plot and Review Results
+
+#5 Generate Summary Outputs
+OLS gave slope of  5.991503 and an R-sqr of  0.9961506 
+
+#6 Introduce a Slight Non-linearity
+
+> summary(d2)
+
+Call:
+lm(formula = y2 ~ x2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.90789 -0.66737 -0.00059  0.78732  2.42396 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   4.4662     0.2011   22.21   <2e-16 ***
+x2            8.4056     0.3545   23.71   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9613 on 98 degrees of freedom
+Multiple R-squared:  0.8516,	Adjusted R-squared:   0.85 
+F-statistic: 562.2 on 1 and 98 DF,  p-value: < 2.2e-16
+
+
+> summary(d3)
+
+Call:
+lm(formula = y2 ~ x2 + x2squared)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.99260 -0.74576  0.02178  0.69595  2.45345 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   4.8702     0.2853  17.068  < 2e-16 ***
+x2            5.9679     1.2869   4.637  1.1e-05 ***
+x2squared     2.5192     1.2800   1.968   0.0519 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.9475 on 97 degrees of freedom
+Multiple R-squared:  0.8573,	Adjusted R-squared:  0.8543 
+F-statistic: 291.3 on 2 and 97 DF,  p-value: < 2.2e-16

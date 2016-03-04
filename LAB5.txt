@@ -1,0 +1,120 @@
+# 1 Login
+# 2 Setworking directory Install Libraries
+# 3 Read Data MBAdata.csv
+# 4 Review Data
+
+> txn@transactionInfo
+  transactionID
+1           101
+2           102
+3           103
+4           104
+5           105
+6           106
+7           107
+> txn@itemInfo
+            labels
+1 Harry-Potter-DVD
+2      Jane-Austen
+3    Learn-Spanish
+4      PSQL-basics
+5         R-basics
+6       Stat-intro
+> image(txn)
+
+# 5 Plot
+# 6 Mine Assoiciation Rules and Inspect
+
+> basket_rules <- apriori(txn,parameter=list(sup=0.5,conf=0.9,target="rules"))
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport support minlen maxlen target   ext
+        0.9    0.1    1 none FALSE            TRUE     0.5      1     10  rules FALSE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 3 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[6 item(s), 7 transaction(s)] done [0.00s].
+sorting and recoding items ... [2 item(s)] done [0.00s].
+creating transaction tree ... done [0.00s].
+checking subsets of size 1 2 done [0.00s].
+writing ... [1 rule(s)] done [0.00s].
+creating S4 object  ... done [0.00s].
+
+> inspect(basket_rules)
+  lhs           rhs          support   confidence lift    
+1 {R-basics} => {Stat-intro} 0.5714286 1          1.166667
+
+# 7 Read in Groceries dataset
+
+> Groceries
+transactions in sparse format with
+ 9835 transactions (rows) and
+ 169 items (columns)
+> Groceries@itemInfo
+                       labels                          level2               level1
+1                 frankfurter                         sausage     meet and sausage
+2                     sausage                         sausage     meet and sausage
+3                  liver loaf                         sausage     meet and sausage
+4                         ham                         sausage     meet and sausage
+5                        meat                         sausage     meet and sausage
+6           finished products                         sausage     meet and sausage
+
+# 8 Mine the Rules for the Groceries Dataset
+
+> rules <- apriori(Groceries, parameter=list(support=0.001, confidence=0.5))
+Apriori
+
+Parameter specification:
+ confidence minval smax arem  aval originalSupport support minlen maxlen target   ext
+        0.5    0.1    1 none FALSE            TRUE   0.001      1     10  rules FALSE
+
+Algorithmic control:
+ filter tree heap memopt load sort verbose
+    0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+
+Absolute minimum support count: 9 
+
+set item appearances ...[0 item(s)] done [0.00s].
+set transactions ...[169 item(s), 9835 transaction(s)] done [0.00s].
+sorting and recoding items ... [157 item(s)] done [0.00s].
+creating transaction tree ... done [0.00s].
+checking subsets of size 1 2 3 4 5 6 done [0.01s].
+writing ... [5668 rule(s)] done [0.00s].
+creating S4 object  ... done [0.00s].
+
+Rules generated
+set of 5668 rules 
+
+# Step 9
+Extract Rules with Confidence >0.8
+
+subrules <- rules[quality(rules)$confidence > 0.8]
+plot(subrules, control = list(jitter=2))
+inspect(subrules)
+
+370 {citrus fruit,                                                                   
+     tropical fruit,                                                                 
+     root vegetables,                                                                
+     other vegetables,                                                               
+     yogurt}                   => {whole milk}       0.001423488  0.8235294  3.223005
+371 {citrus fruit,                                                                   
+     tropical fruit,                                                                 
+     root vegetables,                                                                
+     whole milk,                                                                     
+     yogurt}                   => {other vegetables} 0.001423488  0.9333333  4.823612
+
+Review.
+Subrules 371
+
+# Step 10 List the rules and the value of the parameters associated with these rules
+> inspect(rules_high_lift)
+    lhs                             rhs              support     confidence lift    
+53  {Instant food products,soda} => {hamburger meat} 0.001220132 0.6315789  18.99565
+37  {soda,popcorn}               => {salty snack}    0.001220132 0.6315789  16.69779
+444 {flour,baking powder}        => {sugar}          0.001016777 0.5555556  16.40807

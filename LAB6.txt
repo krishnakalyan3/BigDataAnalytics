@@ -1,0 +1,44 @@
+#1 Set Working Directory
+#2 Generate Random Data
+
+> x <- runif(100, 0, 10)                  # 100 draws between 0 & 10
+> x
+  [1] 4.8975213 4.6027565 9.1212938 8.9224435 6.5886202 3.5533538 5.9527945 8.0585009
+  [9] 9.9737116 4.7290123 7.2014150 3.6176846 8.9792850 8.2101862 1.8078445 4.5024141
+
+Plot and Review 
+
+#3 Generate the OLS model
+
+> print(d)
+
+Call:
+lm(formula = y ~ x)
+
+Coefficients:
+(Intercept)            x  
+      4.853        6.014  
+
+Structure of the Model
+> str(d)
+List of 12
+ $ coefficients : Named num [1:2] 4.85 6.01
+  ..- attr(*, "names")= chr [1:2] "(Intercept)" "x"
+ $ residuals    : Named num [1:100] -1.6842 0.0541 -0.5781 0.9172 1.5555 ...
+  ..- attr(*, "names")= chr [1:100] "1" "2" "3" "4" ...
+ $ effects      : Named num [1:100] -376.345 159.211 -0.397 1.097 1.718 ...
+  ..- attr(*, "names")= chr [1:100] "(Intercept)" "x" "" "" ...
+ $ rank         : int 2
+
+#4 Print and Visualize the Results
+
+> print(d)
+
+Call:
+lm(formula = y ~ x)
+
+Coefficients:
+(Intercept)            x  
+      4.853        6.014  
+
+Plot and Review Results
