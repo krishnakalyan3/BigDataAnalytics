@@ -1,0 +1,202 @@
+#1 Login
+#2 Define the problem and review input data
+
+> #Explore data
+
+How many responses to the survey does the file contain?
+750
+
+What is the main purpose of building this model?
+The marketing campaign team wants to send special offers to those respondents with the
+highest probability of purchase.
+
+
+#3 Set the Working Directory
+#4 Read in and Examine the Data
+> table(Mydata$MYDEPV)
+
+  0   1 
+426 324 
+> with(Mydata, table(Price,MYDEPV))
+     MYDEPV
+Price   0   1
+   10 115 135
+   20 137 113
+   30 174  76
+> summary(Mydata$Age)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  18.00   32.00   32.00   35.98   43.00   66.00 
+> cor.mat <- cor(Mydata[,-1])
+> cor.mat
+       Price     Income        Age
+Price      1 0.00000000 0.00000000
+Income     0 1.00000000 0.09612083
+Age        0 0.09612083 1.00000000
+
+#5 Build and Review Logistic Regression Model
+
+> mylogit <- glm(MYDEPV ~ Income + Age + as.factor(Price),
++ data =Mydata, family=binomial(link="logit"),
++ na.action=na.pass)
+> summary(mylogit)
+
+Call:
+glm(formula = MYDEPV ~ Income + Age + as.factor(Price), family = binomial(link = "logit"), 
+    data = Mydata, na.action = na.pass)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.0388  -0.5581  -0.2434   0.4178   3.2377  
+
+Coefficients:
+                   Estimate Std. Error z value Pr(>|z|)    
+(Intercept)        -6.02116    0.53244 -11.309  < 2e-16 ***
+Income              0.12876    0.00923  13.950  < 2e-16 ***
+Age                 0.03506    0.01179   2.974  0.00294 ** 
+as.factor(Price)20 -0.74418    0.26439  -2.815  0.00488 ** 
+as.factor(Price)30 -2.21028    0.31108  -7.105  1.2e-12 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1025.81  on 749  degrees of freedom
+Residual deviance:  534.17  on 745  degrees of freedom
+AIC: 544.17
+
+Number of Fisher Scoring iterations: 6
+
+
+
+Record the number that describes how much one unit increase in Age increases the log
+odds of purchase.
+0.01197129
+
+Record the log odds at Price point 30 compared to Price point 10 below:
+-2.84054121
+
+#6 Review the Results and Interpret the Coefficients
+
+> confint(mylogit)
+Waiting for profiling to be done...
+                         2.5 %      97.5 %
+(Intercept)        -7.10166938 -5.01101651
+Income              0.11149784  0.14774622
+Age                 0.01197129  0.05830305
+as.factor(Price)20 -1.26927449 -0.23079467
+as.factor(Price)30 -2.84054121 -1.61841547
+
+> exp(mylogit$coefficients)
+       (Intercept)             Income                Age 
+       0.002426851        1.137416400        1.035685762 
+as.factor(Price)20 as.factor(Price)30 
+       0.475124932        0.109669885 
+
+
+$class
+[1] "glm" "lm" 
+
+> 1- with(mylogit, deviance/null.deviance)
+[1] 0.4792654
+
+#7 Use relevel Function to re-level the Price factor with value 30 as the base reference
+
+#8 
+> mylogit2 = glm(MYDEPV ~ Income + Age + pricefactor  ,
++ data= Mydata,family=binomial(link="logit"), na.action=na.pass)
+> Mydata$pricefactor = relevel(as.factor(Mydata$Price), "30")
+> mylogit2 = glm(MYDEPV ~ Income + Age + pricefactor  ,
++ data= Mydata,family=binomial(link="logit"), na.action=na.pass)
+> summary(mylogit2)
+
+Call:
+glm(formula = MYDEPV ~ Income + Age + pricefactor, family = binomial(link = "logit"), 
+    data = Mydata, na.action = na.pass)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.0388  -0.5581  -0.2434   0.4178   3.2377  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   -8.23144    0.66180 -12.438  < 2e-16 ***
+Income         0.12876    0.00923  13.950  < 2e-16 ***
+Age            0.03506    0.01179   2.974  0.00294 ** 
+pricefactor10  2.21028    0.31108   7.105 1.20e-12 ***
+pricefactor20  1.46610    0.29943   4.896 9.76e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1025.81  on 749  degrees of freedom
+Residual deviance:  534.17  on 745  degrees of freedom
+AIC: 544.17
+
+Number of Fisher Scoring iterations: 6
+
+#9 Plot ROC Curve
+
+> pred = predict(mylogit, type="response") # this returns the probability scores on the training data
+> predObj = prediction(pred, Mydata$MYDEPV) # prediction object needed by ROCR
+> rocObj = performance(predObj, measure="tpr", x.measure="fpr")  # creates ROC curve obj
+> aucObj = performance(predObj, measure="auc")  # auc object
+> auc = aucObj@y.values[[1]]
+> auc   # the auc score
+[1] 0.915272
+
+92 is percent is good.
+
+#10 Predict Outcome Given Age and Income
+
+ Income    Age Price
+1 42.492 35.976    10
+2 42.492 35.976    20
+3 42.492 35.976    30
+> newdata1$PurchaseP <- predict (mylogit,newdata=newdata1,type="response")
+> newdata1
+  Income    Age Price PurchaseP
+1 42.492 35.976    10 0.6707408
+2 42.492 35.976    20 0.4918407
+3 42.492 35.976    30 0.1826131
+
+What is your observation on the probability of purchase at different Price levels?
+As price increase the PurchaseP decreases
+
+#11 Predict Outcome for a Sequence of Age Values at price 30 and Mean Income
+> newdata2 <- data.frame(Age=seq(min(Mydata$Age),max(Mydata$Age),2),
++ Income=mean(Mydata$Income),Price=30)
+> newdata2$AgeP<-predict(mylogit,newdata=newdata2,type="response")
+> cbind(newdata2$Age,newdata2$AgeP)
+      [,1]      [,2]
+ [1,]   18 0.1063052
+ [2,]   20 0.1131540
+ [3,]   22 0.1203845
+
+#12 Predict Outcome for a Sequence of Income at price 30 and Mean Age
+> #Prediction - 3
+> newdata3 <- data.frame(Income= seq(20,90,10),Age=mean(Mydata$Age),Price=30)
+> newdata3 <- data.frame(Income= seq(20,90,10),Age=mean(Mydata$Age),Price=30)
+> newdata3$IncomeP<-predict(mylogit,newdata=newdata3,type="response")
+> cbind(newdata3$Income,newdata3$IncomeP)
+     [,1]       [,2]
+[1,]   20 0.01219091
+[2,]   30 0.04281102
+[3,]   40 0.13948050
+
+#13 Use Logistic regression as a classifier
+> newdata4 <- data.frame (Age= round(runif(10,min(Mydata$Age),max(Mydata$Age))),
++ Income= round(runif(10,min(Mydata$Income),max(Mydata$Income))),
++ Price = round((runif(10,10,30)/10))*10)
+> newdata4$Prob <- predict(mylogit,newdata=newdata4,type="response")
+> newdata4
+   Age Income Price        Prob
+1   60     72    20 0.990138082
+2   60     72    20 0.990138082
+3   47     22    10 0.176468896
+4   49     63    20 0.955409864
+
+sum(round(newdata4$Prob))
+How many samples in your random selection qualify for special offers?
+7
+

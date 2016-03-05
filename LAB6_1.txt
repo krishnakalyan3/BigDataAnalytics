@@ -90,4 +90,33 @@ Residual standard error: 0.9475 on 97 degrees of freedom
 Multiple R-squared:  0.8573,	Adjusted R-squared:  0.8543 
 F-statistic: 291.3 on 2 and 97 DF,  p-value: < 2.2e-16
 
+DROP TABLE IF EXISTS zeta1;
+CREATE TABLE zeta1 (
+     depvar FLOAT8,
+     indepvar FLOAT8[] 
+) DISTRIBUTED BY (depvar);
+     
+INSERT INTO zeta1(
+           depvar,indepvar[1],indepvar[2],indepvar[3],indepvar[4])
+SELECT
+    ln(meanhouseholdincome + 1),
+    1,
+    CASE WHEN sex = 'M'  THEN 0
+            WHEN sex = 'F' THEN 1
+         END AS  sex,
+     meanage,
+     meanemployment
+FROM
+     zeta;
+
+
+SET SEARCH_PATH to madlib,public,myschema;
+SELECT (linregr(depvar,indepvar)).r2 FROM zeta1;
+SELECT (linregr(depvar,indepvar)).coef FROM zeta1;
+SELECT (linregr(depvar,indepvar)).std_err FROM zeta1;
+SELECT (linregr(depvar,indepvar)).t_stats FROM zeta1;
+SELECT (linregr(depvar,indepvar)).p_values FROM zeta1;
+
+
+****** Tables zita1,zita and meanhouseholdincome cannot find *****
 
